@@ -4,9 +4,9 @@ The repository contains the code to reproduce the experiments presented in *Effe
 
 The repository is organized in three main directories:
 <ol>
-    <li> knn. It contains the implementations of Amplitude-based QKNN and Basis-based QKNN </li>
-    <li> test_launchers. It contains the scripts to run the entire set of tests performed </li>
-    <li> utility. It contains some utilities needed to store the results, encode data into its binary representation and transform data according to amplitude and basis encoding</li>
+    <li> _knn_. It contains the implementations of Amplitude-based QKNN and Basis-based QKNN </li>
+    <li> _test_launchers_. It contains the scripts to run the entire set of tests performed </li>
+    <li> _utility_. It contains some utilities needed to store the results, encode data into its binary representation and transform data according to amplitude and basis encodings</li>
 </ol>
 
 ##  :runner: How to run experiments
