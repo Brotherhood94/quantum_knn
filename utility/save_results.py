@@ -9,6 +9,7 @@ def _printer(f, exps):
 def print_to_file(name, KNN_exps, aQKNN_exps, bKNN_exps, bQKNN_exps):
     if bQKNN_exps == [] or aQKNN_exps == [] or KNN_exps == [] or bKNN_exps == []:
         print("-------------------------------------------")
+        raise Exception()
         return
     if aQKNN_exps != None:
         sub_dir_name = aQKNN_exps[0]['dataset']+'/amplitude'
