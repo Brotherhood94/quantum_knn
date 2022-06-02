@@ -1,6 +1,8 @@
 from qiskit.providers.aer import AerSimulator, AerError
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, execute
 import math
+import sys
+sys.path.append('..')
 from utility.quantum_encoding.basis_encoding import *
 
 
