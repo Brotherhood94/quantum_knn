@@ -5,7 +5,6 @@ from qiskit.extensions import Initialize, UnitaryGate
 from qiskit.result import Counts
 from qiskit.visualization import plot_histogram
 
-
 import sys
 sys.path.append('..')
 
@@ -133,7 +132,8 @@ class BasisRuan:
         self.c_overflow = ClassicalRegister(1, name='c_overflow')
 
         try:
-            self.simulator = AerSimulator(method='statevector', shots=8192, device='GPU', cuStateVec_enable=True)
+            self.simulator = AerSimulator(method='statevector', shots=8192, device='CPU')
+            #self.simulator = AerSimulator(method='statevector', shots=8192, device='GPU', cuStateVec_enable=True)
         except AerError as e:
             raise Exception('Simulator'+str(e))
 
@@ -218,7 +218,7 @@ class BasisRuan:
         result = execute(self.circuit, self.simulator).result()
         counts = result.get_counts(self.circuit)
         print(self.circuit.draw())
-        print(counts)
+        #print(counts)
         #------------------------------------
 
 
@@ -226,28 +226,18 @@ class BasisRuan:
         #'Post_selection: if training is below the threshold, then self.c_overflow is marked with "1"
         post_select = lambda counts: [(state, occurences) for state, occurences in counts.items() if state[0] == '1']
         postselection = Counts(dict(post_select(counts)))
-        print(postselection)
+        #print(postselection)
 
         #Return the class with highest amplitude or -1 if no trainigns within the threshold
         if postselection: 
             prediction = postselection.most_frequent()[2:2+len(self.cc)] 
         else: 
             prediction = -1
-        print(prediction) 
+        print('Prediction: '+prediction) 
         return prediction
         #------------------------------------
 
 
-
-'''
-threshold = 0 : exact match
-'''
-    
-br = BasisRuan(threshold=0)
-
-
-X = ['1010','0100','0110']
-y = ['00', '11', '10']
 
 
 def randbingen(bin_len, N):
@@ -261,10 +251,21 @@ def randbingen(bin_len, N):
         el = ''
     return dataset
 
-X = randbingen(4, 100)
-y = randbingen(2, 100)
-print(X)
-print(y)
+
+'''
+threshold = 0 : exact match
+'''
+    
+br = BasisRuan(threshold=0)
+
+
+X = ['1010','0100','0110']
+y = ['00', '11', '10']
+
+
+
+X = randbingen(4, 1000)
+y = randbingen(2, 1000)
 
 test = '0110'
 
