@@ -1,10 +1,11 @@
 from qiskit.providers.aer import AerSimulator, AerError
-from qiskit.circuit.library import MCXGate, IntegerComparator
+from qiskit.circuit.library import MCXGate, IntegerComparator, MCMT, RYGate
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, execute
 import math
 import sys
 sys.path.append('..')
 from utility.quantum_encoding.basis_encoding import *
+import numpy as np
 
 import random
 
@@ -52,9 +53,9 @@ def _registers_switcher(circuit, value, qubit_index):
 #Store the value vector[idx] to the corresponding register, the value vector[idx] in the target qubit
 def _amplitude_mapper(circuit, vector, feature_qubits, control_qubits, target, qram=None):
     for idx in range(len(vector)):
-        _registers_switcher(circuit, idx, feature_qubits)
-        circuit.mcry(vector[idx], control_qubits, target, qram) #TODO: according to paper is 2*theta, not just theta
-        _registers_switcher(circuit, idx, feature_qubits)
+        _registers_switcher(circuit, idx+1, feature_qubits) #TODO: qua c'è un idx+1
+        circuit.append(MCMT(RYGate(vector[idx]), num_ctrl_qubits=len(control_qubits), num_target_qubits=1), control_qubits[0:]+[target])#mcry(vector[idx], control_qubits, target) #TODO: according to paper is 2*theta, not just theta
+        _registers_switcher(circuit, idx+1, feature_qubits)
         circuit.barrier()
 
 #-----------DUPLICATE----------------------- (amplitude mapper)
@@ -81,25 +82,30 @@ class DangQuantumKnn:
         self.comp_anc_features = QuantumRegister(len(self.j)-1, 'comp_anc_features')
         self.c = QuantumRegister(1, 'tr_class') #TODO: Parametrize
 
-        self.b = QuantumRegister(1, 'tr_feature')
-        self.a = QuantumRegister(1, 'test_feature')
+        self.i_test = QuantumRegister(n, 'i_test') #qubits indexing features
+        self.comp_anc_features_test = QuantumRegister(len(self.j)-1, 'comp_anc_features_test')
+
+        self.b = QuantumRegister(1, 'tr_data')
+        self.a = QuantumRegister(1, 'test_data')
+        self.s = QuantumRegister(1, 'swap_test')
 
 
         self.flags_trainings = QuantumRegister(2, 'flags_trainings')
         self.flags_features = QuantumRegister(2, 'flags_features')
+        self.flags_features_test = QuantumRegister(2, 'flags_features_test')
 
 
         self.c_j = ClassicalRegister(len(self.j), 'c_j')
-        self.c_i = ClassicalRegister(len(self.j), 'c_i')
+        self.c_i = ClassicalRegister(len(self.i), 'c_i')
         self.c_flags_trainings = ClassicalRegister(2, 'c_flags_trainings')
         self.c_flags_features = ClassicalRegister(2, 'c_flags_features')
 
-        self.circuit = QuantumCircuit(self.j, self.comp_anc_tr, self.flags_trainings, self.i, self.comp_anc_features, self.flags_features, self.b, self.c, self.a, self.c_j, self.c_flags_trainings, self.c_i, self.c_flags_features)
+        self.circuit = QuantumCircuit(self.s, self.j, self.comp_anc_tr, self.flags_trainings, self.i, self.comp_anc_features, self.flags_features, self.i_test, self.comp_anc_features_test, self.flags_features_test, self.b, self.c, self.a, self.c_j, self.c_flags_trainings, self.c_i, self.c_flags_features)
 
         #self.circuit.append(get_binary_value_gate(bin_M, len(self.qbin_M), name='bin_M'), self.qbin_M)
         try:
-            #self.simulator = AerSimulator(method='statevector', shots=8192, device='CPU')
-            self.simulator = AerSimulator(method='statevector', shots=8192, device='GPU', cuStateVec_enable=True)
+            self.simulator = AerSimulator(method='statevector', shots=8192, device='CPU')
+            #self.simulator = AerSimulator(method='statevector', shots=8192, device='GPU', cuStateVec_enable=True)
         except AerError as e:
             raise Exception('Simulator'+str(e))
 
@@ -109,6 +115,7 @@ class DangQuantumKnn:
 
         self.circuit = None
 
+        #TODO: arcsin applicato fuori (check)
         #M = X_train.shape[0] #Number of trainings
         #N = X_train.shape[1] #Number of features
         M = 4
@@ -120,23 +127,21 @@ class DangQuantumKnn:
         self._init_circuit(M, N)
 
         self.circuit.h(self.j)
-        self.circuit.barrier()
         self.circuit.append(_init_index_state_gate(len(self.j), M, name='init_indexes_trainings'), self.j[0:]+[self.flags_trainings[0]]+self.comp_anc_tr[0:]+[self.flags_trainings[1]]) #q_index > M
 
-        self.circuit.barrier()
         self.circuit.h(self.i)
         self.circuit.append(_init_index_state_gate(len(self.i), N, name='init_indexes_features'), self.i[0:]+[self.flags_features[0]]+self.comp_anc_features[0:]+[self.flags_features[1]]) #q_index > M
+
+        self.circuit.h(self.i_test)
+        self.circuit.append(_init_index_state_gate(len(self.i_test), N, name='init_indexes_features_test'), self.i_test[0:]+[self.flags_features_test[0]]+self.comp_anc_features_test[0:]+[self.flags_features_test[1]]) #q_index > M
         self.circuit.barrier()
 
-        self.circuit.measure(self.j, self.c_j)
-        self.circuit.measure(self.flags_trainings, self.c_flags_trainings)
-        self.circuit.measure(self.i, self.c_i)
-        self.circuit.measure(self.flags_features, self.c_flags_features)
 
+        #TODO: ricorda che loro partono da 1 e non da 0
         #------- BEGIN: ENCODE TRAINING VECTORS
         for idx, x_i, y_i in zip(range(len(X_train)), X_train, y_train):
 
-            _registers_switcher(self.circuit, idx, self.j) #Switching index
+            _registers_switcher(self.circuit, idx+1, self.j) #Switching index
             _registers_switcher(self.circuit, y_i, self.c) #Switching class
 
             self.circuit.barrier()
@@ -144,33 +149,44 @@ class DangQuantumKnn:
             _amplitude_mapper(self.circuit, x_i, self.i, self.i[0:]+self.j[0:]+self.c[0:], self.b[0])
             #TODO: in original algorithm seems not encoding classes
 
-            _registers_switcher(self.circuit, idx, self.j) #undo index vector
+            _registers_switcher(self.circuit, idx+1, self.j) #undo index vector
             _registers_switcher(self.circuit, y_i, self.c) #undo class
 
             self.circuit.barrier()
         #-------------------------------------
 
-        result = execute(self.circuit, self.simulator).result()
-        counts = result.get_counts(self.circuit)
-        print(self.circuit.draw())
 
-#        for el in counts:
-#            print(el)
 
-        print(counts)
-
+    #TODO: alpha è su un'altro indice i 
     def predict(self, X_test):
         if self.circuit == None:
             raise Exception("Circuit not available. Please use method 'fit'")
 
         X_test = np.arcsin(X_test) #TODO: check come viene passato
         #------- BEGIN: ENCODE TEST VECTOR
-        _amplitude_mapper(self.circuit, X_test[0], self.i, self.i[0:], self.a[0])
+        _amplitude_mapper(self.circuit, X_test[0], self.i_test, self.i_test[0:], self.a[0])
         self.circuit.barrier()
+
+        #--- SWAP TEST
+        self.circuit.h(self.s)
+        for l in range(len(self.i)):
+            self.circuit.cswap(self.s, self.i[l], self.i_test[l])
+        self.circuit.cswap(self.s, self.a, self.b)
+        self.circuit.h(self.s)
+        #------------
+        
+        self.circuit.barrier()
+
+        self.circuit.measure(self.j, self.c_j)
+        self.circuit.measure(self.flags_trainings, self.c_flags_trainings)
+        self.circuit.measure(self.i, self.c_i)
+        self.circuit.measure(self.flags_features, self.c_flags_features)
+
+        #why no post selection for qram?
 
         result = execute(self.circuit, self.simulator).result()
         counts = result.get_counts(self.circuit)
-        print(self.circuit.decompose().draw())
+        print(self.circuit.draw())
 
 #        for el in counts:
 #            print(el)
@@ -185,8 +201,9 @@ dqk = DangQuantumKnn()
 #TODO: check order switch register
 X_train = []
 y_train = []
-n_items = 1
-n_feature = 1
+#test con n_items=16 out of index
+n_items = 3
+n_feature = 2
 for i in range(n_items):
     el = []
     for i in range(n_feature):
@@ -194,16 +211,12 @@ for i in range(n_items):
     X_train.append(el)
     y_train.append(random.randint(0, 1))
 
-print(X_train)
-print(y_train)
 dqk.fit(X_train, y_train)
 
-
-
-
-
-
-
-
-
-        
+X_test = []
+el = []
+for i in range(n_feature):
+    el.append(random.uniform(0, 1))
+X_test.append(el)
+print(X_test)
+dqk.predict(X_test) 

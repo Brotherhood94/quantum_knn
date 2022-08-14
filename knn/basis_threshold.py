@@ -26,12 +26,6 @@ def same_lenght(items):
         raise Exception('Binary values not of the same lenght')
     return binary_lenght_items
 
-def registers_switcher(circuit, value, qubit_index): 
-    bin_str_pattern = '{:0%sb}' % len(qubit_index)
-    value = bin_str_pattern.format(value)[::-1]  
-    for idx, bit in enumerate(value):
-        if int(bit): #TODO: qui avevo un "if not int(..)" perchè quel not?"
-            circuit.x(qubit_index[idx])
 
 def get_binary_value(value, encoding_length): #refactor uniformare con il _registers_switcher
     bin_str_pattern = '{:0%sb}' % encoding_length
