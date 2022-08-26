@@ -66,7 +66,7 @@ def test_2_pca(X, y, knn_k, test_iters, train_iters, exp_records_per_class, data
                       bQKNN_exps.append(bQKNN)
 
 
-                print_to_file(dataset+"_TEST_2_PCA_n_records_per_class:"+str(n_records_per_class)+"_"+enc_type, None, None, bKNN_exps, bQKNN_exps)
+                print_to_file(dataset+"_TEST_2_PCA_n_records_per_class:"+str(n_records_per_class)+"_"+enc_type, bKNN_exps, bQKNN_exps)
                 bQKNN_exps = []
                 bKNN_exps = []
                 di_train = []

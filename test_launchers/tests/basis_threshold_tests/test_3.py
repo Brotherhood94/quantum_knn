@@ -2,11 +2,13 @@ import utility.selections as sel
 import math
 from tqdm import trange
 from utility.save_results import print_to_file
-from tests.test_body import execute_body_basis, check_iters
+from tests.test_body import execute_body_basis_threshold, check_iters
+
+
 
 ### TEST_3_PCA
 
-def test_3_pca(X, y, knn_k, test_iters, dataset, n_classes, n_features_real, training_type, test_size, enc_type, n_bits, comb):
+def test_3_pca(X, y, knn_k, test_iters, dataset, n_classes, n_features_real, training_type, test_size, enc_type, n_bits):
 
     bQKNN_exps = []
     bKNN_exps = []
@@ -14,10 +16,6 @@ def test_3_pca(X, y, knn_k, test_iters, dataset, n_classes, n_features_real, tra
     di_test = []
 
     pca = 'true'
-
-    #filtering classes
-    X = X.drop(y[(y!=comb[0]) & (y != comb[1])].index)
-    y = y[(y == comb[0]) | (y == comb[1])]
 
     test_iters, _ = check_iters(X, y, 1, 1, test_iters, 1, test_size)
     features_range = trange(2,  int(math.ceil(math.log2(n_features_real))), desc='pca')
@@ -29,9 +27,10 @@ def test_3_pca(X, y, knn_k, test_iters, dataset, n_classes, n_features_real, tra
                                                                                               random_state_test=random_state_test,
                                                                                               discard_index_test=di_test)
 
-
             selected_y_test = [y.loc[di_test[0]]] 
-            bKNN, bQKNN = execute_body_basis(knn_k, selected_X_train, selected_X_test, selected_y_train, selected_y_test,
+
+
+            bKNN, bQKNN = execute_body_basis_threshold(knn_k, selected_X_train, selected_X_test, selected_y_train, selected_y_test,
                                                     dataset,
                                                     n_classes,
                                                     n_features_real,
@@ -49,7 +48,7 @@ def test_3_pca(X, y, knn_k, test_iters, dataset, n_classes, n_features_real, tra
             bKNN_exps.append(bKNN)
 
 
-        print_to_file(dataset+"_TEST_3_PCA:"+str(n_features_pca)+"_"+enc_type+"_"+str(comb), bKNN_exps, bQKNN_exps)
+        print_to_file(dataset+"_TEST_3_PCA:"+str(n_features_pca)+"_"+enc_type, bKNN_exps, bQKNN_exps)
         bQKNN_exps = []
         bKNN_exps = []
         di_test = []

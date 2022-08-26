@@ -44,7 +44,7 @@ def test_3_no_pca(X, y, knn_k, test_iters, dataset, n_classes, n_features_real, 
         KNN_exps.append(KNN)
 
 
-    print_to_file(dataset+"_TEST_3_No_PCA", KNN_exps, aQKNN_exps, None, None)
+    print_to_file(dataset+"_TEST_3_No_PCA", KNN_exps, aQKNN_exps)
     aQKNN_exps = []
     KNN_exps = []
 
@@ -86,7 +86,7 @@ def test_3_pca(X, y, knn_k, test_iters, dataset, n_classes, n_features_real, tra
             KNN_exps.append(KNN)
 
 
-        print_to_file(dataset+"_TEST_3_PCA:"+str(n_features_pca), KNN_exps, aQKNN_exps, None, None)
+        print_to_file(dataset+"_TEST_3_PCA:"+str(n_features_pca), KNN_exps, aQKNN_exps)
         aQKNN_exps = []
         KNN_exps = []
         di_test = []

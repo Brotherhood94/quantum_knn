@@ -1,4 +1,5 @@
 from sklearn.datasets import load_iris, load_breast_cancer, load_digits
+from datasets.load_external_dataset import load_sonar, load_soybean_small
 import numpy as np
 
 import tests.basis_tests.test_1 as t1
@@ -7,7 +8,8 @@ import tests.basis_tests.test_3 as t3
 import tests.basis_tests.test_4 as t4
 
 encodings = ['entropy', 'hash']
-datasets = {load_iris:'iris', load_breast_cancer:'breast_cancer', load_digits:'digits'}
+#datasets = {load_iris:'iris', load_breast_cancer:'breast_cancer', load_digits:'digits'}
+datasets = {load_sonar:'sonar', load_soybean_small:'soybean_small'}
 
 for enc_type in encodings:
     for d_call, d_name in datasets.items():

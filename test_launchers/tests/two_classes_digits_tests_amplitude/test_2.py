@@ -62,7 +62,7 @@ def test_2_no_pca(X, y, knn_k, test_iters, train_iters, exp_records_per_class, d
                   KNN_exps.append(KNN)
 
 
-            print_to_file(dataset+"_TEST_2_No_PCA_n_records_per_class:"+str(n_records_per_class)+"_"+str(comb), KNN_exps, aQKNN_exps, None, None)
+            print_to_file(dataset+"_TEST_2_No_PCA_n_records_per_class:"+str(n_records_per_class)+"_"+str(comb), KNN_exps, aQKNN_exps)
             aQKNN_exps = []
             KNN_exps = []
             di_train = []
@@ -126,7 +126,7 @@ def test_2_pca(X, y, knn_k, test_iters, train_iters, exp_records_per_class, data
                       KNN_exps.append(KNN)
 
 
-                print_to_file(dataset+"_TEST_2_PCA_n_records_per_class:"+str(n_records_per_class)+"_"+str(comb), KNN_exps, aQKNN_exps, None, None)
+                print_to_file(dataset+"_TEST_2_PCA_n_records_per_class:"+str(n_records_per_class)+"_"+str(comb), KNN_exps, aQKNN_exps)
                 aQKNN_exps = []
                 KNN_exps = []
                 di_train = []

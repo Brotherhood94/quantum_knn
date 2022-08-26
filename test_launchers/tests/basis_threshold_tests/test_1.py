@@ -1,12 +1,12 @@
 import utility.selections as sel
 import math
 from tqdm import trange
-from tests.test_body import execute_body_basis, check_iters
 from utility.save_results import print_to_file
+from tests.test_body import execute_body_basis_threshold, check_iters
 
 
 
-def test_1_pca(X, y, knn_k, test_iters, train_iters, dataset, n_classes, n_features_real, training_type, test_size, enc_type, n_bits, comb):
+def test_1_pca(X, y, knn_k, test_iters, train_iters, dataset, n_classes, n_features_real, training_type, test_size, enc_type, n_bits):
 
     pca = 'true'
     n_records_per_class=1
@@ -16,10 +16,6 @@ def test_1_pca(X, y, knn_k, test_iters, train_iters, dataset, n_classes, n_featu
 
     di_train = []
     di_test = []
-
-    #filtering classes
-    X = X.drop(y[(y!=comb[0]) & (y != comb[1])].index)
-    y = y[(y == comb[0]) | (y == comb[1])]
 
     test_iters, train_iters = check_iters(X, y, n_records_per_class, n_classes, test_iters, train_iters, test_size)
 
@@ -41,7 +37,7 @@ def test_1_pca(X, y, knn_k, test_iters, train_iters, dataset, n_classes, n_featu
                                                                                                         discard_index_test=di_test)
                 selected_y_test = [y.loc[di_test[0]]] 
 
-                bKNN, bQKNN = execute_body_basis(knn_k, selected_X_train, selected_X_test, selected_y_train, selected_y_test,
+                bKNN, bQKNN = execute_body_basis_threshold(knn_k, selected_X_train, selected_X_test, selected_y_train, selected_y_test,
                                                             dataset,
                                                             n_classes,
                                                             n_features_real,
@@ -60,7 +56,7 @@ def test_1_pca(X, y, knn_k, test_iters, train_iters, dataset, n_classes, n_featu
                 bQKNN_exps.append(bQKNN)
                 
 
-            print_to_file(dataset+"_TEST_1_PCA_"+enc_type+"_"+str(comb), bKNN_exps, bQKNN_exps)
+            print_to_file(dataset+"_TEST_1_PCA_"+enc_type, bKNN_exps, bQKNN_exps)
             bQKNN_exps = []
             bKNN_exps = []
             di_train = []

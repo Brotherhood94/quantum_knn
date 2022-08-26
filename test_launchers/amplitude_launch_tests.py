@@ -1,5 +1,6 @@
 from tkinter import W
 from sklearn.datasets import load_iris, load_breast_cancer, load_digits
+from datasets.load_external_dataset import load_sonar, load_soybean_small
 import numpy as np
 
 import tests.amplitude_tests.test_1 as t1
@@ -8,7 +9,8 @@ import tests.amplitude_tests.test_3 as t3
 import tests.amplitude_tests.test_4 as t4
 
 
-datasets = {load_iris:'iris', load_breast_cancer:'breast_cancer', load_digits:'digits'}
+#datasets = {load_iris:'iris', load_breast_cancer:'breast_cancer', load_digits:'digits', load_sonar:'sonar', load_soybean_small:'soybean_small'}
+datasets = {load_sonar:'sonar', load_soybean_small:'soybean_small'}
 
 for d_call, d_name in datasets.items():
     X, y = d_call(return_X_y=True, as_frame=True)
@@ -24,8 +26,8 @@ for d_call, d_name in datasets.items():
     print("[Started Test 1]")
     # 1 test istance, 1 istance per class training
     # 100 Random Selection on Training, 100 Random Selection on Test
-    test_iters_t1 = 100
-    train_iters_t1 = 100
+    test_iters_t1 = 50
+    train_iters_t1 = 50
 
     t1.test_1_no_pca(X, y, knn_k, test_iters_t1, train_iters_t1, dataset, n_classes, n_features_real, training_type, test_size)
 
@@ -39,8 +41,8 @@ for d_call, d_name in datasets.items():
     # 1 test instance, n_records_per_class=2,4,8,16,32 in training
     # 20 Random Selection on Training, 100 Random Selection on Test, variable number of elements per class
 
-    test_iters_t2 = 100
-    train_iters_t2 = 100
+    test_iters_t2 = 50
+    train_iters_t2 = 50
     exp_records_per_class = 6 #2,4,8,16,32 (2^5)
 
     t2.test_2_no_pca(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class,dataset, n_classes, n_features_real, training_type, test_size)

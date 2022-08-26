@@ -1,13 +1,34 @@
 from qiskit import QuantumCircuit, QuantumRegister
 from qiskit.extensions import UnitaryGate
 
+
+
+def get_binary_value(value, encoding_length): 
+    bin_str_pattern = '{:0%sb}' % encoding_length
+    value = bin_str_pattern.format(value)
+    return value
+
+def get_binary_value_gate(binary_value, binary_lenght, name=''):
+    if len(binary_value) != binary_lenght:
+        raise Exception("len bin(test) {}, while binary_lenght is {}".format(len(binary_value), binary_lenght)) 
+
+    b = QuantumRegister(binary_lenght, name='b')
+    qc = QuantumCircuit(b, name=name+' '+str(int(binary_value, 2)))
+
+    for i in range(len(binary_value)):
+        if binary_value[i] == '1':
+            qc.x(b[len(b)-1-i])
+
+    return qc.to_gate()
+
 def _get_binary_dataset(dataset, N):
     binary_dataset = []
     #Binary Length
-    bin_str_pattern = '{:0%sb}' % N
+    #bin_str_pattern = '{:0%sb}' % N
     #Convert dataset in binary values in N qubits
     for elem in dataset:
-        binary_elem = bin_str_pattern.format(elem) #return the binary representation of i
+        binary_elem = get_binary_value(elem, N)  #return the binary representation of i
+        #binary_elem = bin_str_pattern.format(elem)
         binary_dataset.append(binary_elem)
     return binary_dataset
 

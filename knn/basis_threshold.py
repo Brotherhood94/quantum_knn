@@ -1,3 +1,4 @@
+from qiskit.providers.aer import AerSimulator, AerError
 from qiskit import *
 from qiskit.providers.aer import *
 from qiskit.circuit.library import *
@@ -13,7 +14,6 @@ from utility.quantum_encoding.basis_encoding import *
 import matplotlib
 
 import random
-#matplotlib.use('tkagg') 
 #import matplotlib.pyplot as plt
 
 
@@ -23,39 +23,18 @@ def same_lenght(items):
     binary_lenght_items = len(max(items, key=len))
     are_all_same_lengths_items = all(len(binary_value) == binary_lenght_items for binary_value in items)
     if not are_all_same_lengths_items:
-        raise Exception('Binary values not of the same lenght')
+        raise Exception('Binary values are not of the same lenght')
     return binary_lenght_items
 
 
-def get_binary_value(value, encoding_length): #refactor uniformare con il _registers_switcher
-    bin_str_pattern = '{:0%sb}' % encoding_length
-    value = bin_str_pattern.format(value)
-    return value
-
 # Return the gate which compute the Hamming Distance        
-def get_hamming_distance_gate(binary_lenght, name="Hamming Distance"): #TODO: già definito -> refactor
+def get_hamming_distance_gate(binary_lenght, name="Hamming Distance"): 
     v = QuantumRegister(binary_lenght, name='v')
     x = QuantumRegister(binary_lenght, name='x')
     qc = QuantumCircuit(v, x, name=name)
     
     for v_i, x_i in zip(v, x): 
         qc.cx(v_i, x_i)  #XOR(V,X)   
-
-    return qc.to_gate()
-
-
-#TODO: refactor also in the other files
-#Returns the gate encoding a binary_value
-def get_binary_value_gate(binary_value, binary_lenght, name=''):
-    if len(binary_value) != binary_lenght:
-        raise Exception("len bin(test) {}, while binary_lenght is {}".format(len(binary_value), binary_lenght)) 
-
-    b = QuantumRegister(binary_lenght, name='b')
-    qc = QuantumCircuit(b, name=name+' '+str(int(binary_value, 2)))
-
-    for i in range(len(binary_value)):
-        if binary_value[i] == '1':
-            qc.x(b[len(b)-1-i])
 
     return qc.to_gate()
 
@@ -110,7 +89,7 @@ class BasisRuan:
 
         #Quantum Registers
         self.v = QuantumRegister(binary_lenght_X, name='v')  #encode training vectors
-        self.c = QuantumRegister(binary_lenght_y, name='c') #TODO: occhio remapping delle classi   #store class of training
+        self.c = QuantumRegister(binary_lenght_y, name='c')  #store class of training
         self.x = QuantumRegister(len(self.v), name='x') #encode test vector
 
         size_a =  len(bin(self.l+self.t+binary_lenght_X).replace("0b", "")) #Maximum size of value in register a
@@ -126,7 +105,8 @@ class BasisRuan:
         self.c_overflow = ClassicalRegister(1, name='c_overflow')
 
         try:
-            self.simulator = AerSimulator(method='statevector', shots=8192, device='CPU')
+            self.simulator = AerSimulator(method='statevector', shots=8192)#, device='CPU')
+            #self.simulator = AerSimulator(method='statevector', shots=8192, device='CPU')
             #self.simulator = AerSimulator(method='statevector', shots=8192, device='GPU', cuStateVec_enable=True)
         except AerError as e:
             raise Exception('Simulator'+str(e))
@@ -211,7 +191,7 @@ class BasisRuan:
 
         result = execute(self.circuit, self.simulator).result()
         counts = result.get_counts(self.circuit)
-        print(self.circuit.draw())
+        #print(self.circuit.draw())
         #print(counts)
         #------------------------------------
 
@@ -219,17 +199,20 @@ class BasisRuan:
         #------------- STEP 6 ----------------
         #'Post_selection: if training is below the threshold, then self.c_overflow is marked with "1"
         post_select = lambda counts: [(state, occurences) for state, occurences in counts.items() if state[0] == '1']
-        postselection = Counts(dict(post_select(counts)))
+        #postselection = Counts(dict(post_select(counts)))
+        postselection = dict(post_select(counts))
         #print(postselection)
 
         #Return the class with highest amplitude or -1 if no trainigns within the threshold
         if postselection: 
-            prediction = postselection.most_frequent()[2:2+len(self.cc)] 
+            prediction = max(postselection, key=postselection.get)[2:2+len(self.cc)]
+            #prediction = postselectiona.most_frequent()[2:2+len(self.cc)] #TODO: try catch che può saltare
         else: 
             prediction = -1
-        print('Prediction: '+prediction) 
         return prediction
         #------------------------------------
+        #TODO: ricordarsi il match per fare il controllo della corretta prediction. 
+        #TODO: se converto a int l'ordine è corretto?
 
 
 
@@ -250,12 +233,12 @@ def randbingen(bin_len, N):
 threshold = 0 : exact match
 '''
     
+'''
 br = BasisRuan(threshold=0)
 
 
 X = ['1010','0100','0110']
 y = ['00', '11', '10']
-
 
 
 X = randbingen(4, 1000)
@@ -264,4 +247,7 @@ y = randbingen(2, 1000)
 test = '0110'
 
 br.fit(X, y)
-br.predict(test)
+res = br.predict(test)
+print(res)
+print(int(res,2))
+'''

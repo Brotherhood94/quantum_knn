@@ -56,7 +56,7 @@ def test_1_pca(X, y, knn_k, test_iters, train_iters, dataset, n_classes, n_featu
                 bQKNN_exps.append(bQKNN)
                 
 
-            print_to_file(dataset+"_TEST_1_PCA_"+enc_type, None, None, bKNN_exps, bQKNN_exps)
+            print_to_file(dataset+"_TEST_1_PCA_"+enc_type, bKNN_exps, bQKNN_exps)
             bQKNN_exps = []
             bKNN_exps = []
             di_train = []

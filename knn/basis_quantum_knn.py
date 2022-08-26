@@ -4,6 +4,7 @@ import math
 import sys
 sys.path.append('..')
 from utility.quantum_encoding.basis_encoding import *
+import random
 
 
 #Counts the number of "1"
@@ -47,8 +48,7 @@ def subs_gate(n, name="sub"):
 def two_binary_complement_gate(value, n, name='value'): 
     if value >= 2**n:
         raise Exception("Unable to map value in 2^n bit") 
-    bin_str_pattern = '{:0%sb}' % n
-    binary_string = bin_str_pattern.format(value) #return the binary repr of i. 
+    binary_string = get_binary_value(value, n) #return the binary repr of i. 
     binary_string_list = list(binary_string)
     for i in range(len(binary_string_list)):
         if binary_string_list[i] == '0':
@@ -59,15 +59,9 @@ def two_binary_complement_gate(value, n, name='value'):
     int_repr = int(bitwise,2)
     int_two_complement = int_repr + 1
     int_two_complement = int_two_complement%(2**n)
-    bin_two_complement = bin_str_pattern.format(int_two_complement)
-    
-    b = QuantumRegister(n, name='b')
-    qc = QuantumCircuit(b, name=name)
-    
-    for i in range(len(bin_two_complement)):
-        if bin_two_complement[i] == '1':
-            qc.x(b[len(b)-1-i])
-    return qc.to_gate()
+    bin_two_complement = get_binary_value(int_two_complement, n) #return the binary repr of two_compl. 
+    qc = get_binary_value_gate(bin_two_complement, n)
+    return qc
 
 
 
@@ -103,19 +97,6 @@ def _update_key(side, prev_key, minimum, maximum):
         minimum = prev_key + 1
     key = math.floor((maximum+minimum)/2)
     return key, minimum, maximum
-
-# Get the gate that encode the test vector
-def _get_test_gate(bin_test, N):
-    if len(bin_test) != N:
-        raise Exception("len bin(test) {}, while N is {}".format(len(bin_test), N)) 
-    b = QuantumRegister(N, name='b')
-    qc = QuantumCircuit(b, name=str(int(bin_test,2)))
-
-    for i in range(len(bin_test)):
-        if bin_test[i] == '1':
-            qc.x(b[len(b)-1-i])
-
-    return qc.to_gate()
 
 
 class BasisQKNeighborsClassifier:
@@ -156,7 +137,9 @@ class BasisQKNeighborsClassifier:
 
         #Instantiate Simulator
         try:
-            self.simulator = AerSimulator(method='statevector', shots=8192, device='GPU', cuStateVec_enable=True)
+            #self.simulator = AerSimulator(method='statevector', shots=8192, device='GPU', cuStateVec_enable=True)
+            self.simulator = AerSimulator(method='statevector', shots=8192)
+
         except AerError as e:
             print(e)
 
@@ -195,7 +178,7 @@ class BasisQKNeighborsClassifier:
             init_circuit = self.circuit.copy()
 
             #Loading Test
-            self.circuit.append(_get_test_gate(test, self.N), self.x[0:])
+            self.circuit.append(get_binary_value_gate(test, self.N, 'test:'), self.x[0:])
 
             self.circuit.append(two_binary_complement_gate(key, self.n, name='key: '+str(key)), self.b[0:])
             self.circuit.append(self.template_circuit, self.circuit.qubits)
@@ -237,9 +220,40 @@ class BasisQKNeighborsClassifier:
             self.circuit = init_circuit.copy()
 
         #If more than one results, then return -1
+        #return the closer training to the test
         if len(prediction) == 1:
             return prediction[0]
         return -1
         
         #--------------------------------------------------#
 
+def randbingen(bin_len, N):
+    dataset = []
+    el = ''
+    for i in range(N):
+        for i in range(bin_len):
+            x = random.randint(0,1)
+            el += str(x)
+        dataset.append(el) 
+        el = ''
+    return dataset
+
+
+    
+'''
+br = BasisQKNeighborsClassifier(precision=4)
+
+
+X = ['1010','0100','0110']
+y = ['00', '11', '10']
+
+
+
+X = randbingen(4, 1000)
+y = randbingen(2, 1000)
+
+test = '0110'
+
+br.fit(X)
+print(br.predict(test))
+'''

@@ -2,11 +2,11 @@ import utility.selections as sel
 import math
 from tqdm import trange
 from utility.save_results import print_to_file
-from tests.test_body import execute_body_basis, check_iters
+from tests.test_body import execute_body_basis_threshold, check_iters
 
 
 
-def test_2_pca(X, y, knn_k, test_iters, train_iters, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size, enc_type, n_bits, comb):
+def test_2_pca(X, y, knn_k, test_iters, train_iters, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size, enc_type, n_bits):
     #### TEST 2 PCA ####
 
 
@@ -17,10 +17,6 @@ def test_2_pca(X, y, knn_k, test_iters, train_iters, exp_records_per_class, data
     di_test = []
 
     pca = 'true'
-
-    #filtering classes
-    X = X.drop(y[(y!=comb[0]) & (y != comb[1])].index)
-    y = y[(y == comb[0]) | (y == comb[1])]
 
     features_range = trange(1,  int(math.ceil(math.log2(n_features_real))), desc='pca')
     for n_features_pca in (2**e for e in features_range): #start from 2, exponential step
@@ -51,7 +47,7 @@ def test_2_pca(X, y, knn_k, test_iters, train_iters, exp_records_per_class, data
 
                       selected_y_test = [y.loc[di_test[0]]] 
 
-                      bKNN, bQKNN = execute_body_basis(knn_k, selected_X_train, selected_X_test, selected_y_train, selected_y_test,
+                      bKNN, bQKNN = execute_body_basis_threshold(knn_k, selected_X_train, selected_X_test, selected_y_train, selected_y_test,
                                         dataset,
                                         n_classes,
                                         n_features_real,
@@ -70,7 +66,7 @@ def test_2_pca(X, y, knn_k, test_iters, train_iters, exp_records_per_class, data
                       bQKNN_exps.append(bQKNN)
 
 
-                print_to_file(dataset+"_TEST_2_PCA_n_records_per_class:"+str(n_records_per_class)+"_"+enc_type+"_"+str(comb), bKNN_exps, bQKNN_exps)
+                print_to_file(dataset+"_TEST_2_PCA_n_records_per_class:"+str(n_records_per_class)+"_"+enc_type, bKNN_exps, bQKNN_exps)
                 bQKNN_exps = []
                 bKNN_exps = []
                 di_train = []

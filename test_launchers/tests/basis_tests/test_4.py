@@ -50,7 +50,7 @@ def test_4_pca(X, y, knn_k, test_iters, exp_records_per_class, dataset, n_classe
                   bKNN_exps.append(bKNN)
 
 
-            print_to_file(dataset+"_TEST_4_PCA:"+str(n_features_pca)+"_n_records_per_class_"+str(n_records_per_class)+"_"+enc_type, None, None, bKNN_exps, bQKNN_exps)
+            print_to_file(dataset+"_TEST_4_PCA:"+str(n_features_pca)+"_n_records_per_class_"+str(n_records_per_class)+"_"+enc_type, bKNN_exps, bQKNN_exps)
             bQKNN_exps = []
             bKNN_exps = []
             di_test = []

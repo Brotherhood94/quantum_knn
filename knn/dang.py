@@ -9,20 +9,6 @@ import numpy as np
 
 import random
 
-#TODO: refactor also in the other files (ex: basis_threshold.py)
-#Returns the gate encoding a binary_value
-def get_binary_value_gate(binary_value, binary_lenght, name=''):
-    if len(binary_value) != binary_lenght:
-        raise Exception("len bin(test) {}, while binary_lenght is {}".format(len(binary_value), binary_lenght)) 
-
-    b = QuantumRegister(binary_lenght, name='b')
-    qc = QuantumCircuit(b, name=name+' '+str(int(binary_value, 2)))
-
-    for i in range(len(binary_value)):
-        if binary_value[i] == '1':
-            qc.x(b[len(b)-1-i])
-
-    return qc.to_gate()
 
 
 def _init_index_state_gate(register_size, n_elements, name='init_indexes'):
@@ -104,7 +90,7 @@ class DangQuantumKnn:
 
         #self.circuit.append(get_binary_value_gate(bin_M, len(self.qbin_M), name='bin_M'), self.qbin_M)
         try:
-            self.simulator = AerSimulator(method='statevector', shots=8192, device='CPU')
+            self.simulator = AerSimulator(method='aer_simulator_statevector', shots=8192, device='GPU')
             #self.simulator = AerSimulator(method='statevector', shots=8192, device='GPU', cuStateVec_enable=True)
         except AerError as e:
             raise Exception('Simulator'+str(e))

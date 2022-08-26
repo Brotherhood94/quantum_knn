@@ -1,4 +1,4 @@
-from qiskit.providers.aer import AerError
+from qiskit.providers.aer import AerError, AerSimulator
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, execute, Aer
 import numpy as np
 import math
@@ -18,17 +18,6 @@ def _amplitude_mapper(circuit, vector, feature_qubits, control_qubits, target, q
         circuit.mcry(vector[idx], control_qubits, target, qram)
         _registers_switcher(circuit, idx, feature_qubits)
         circuit.barrier()
-
-def _majority_vote(counts):
-    classes_votes = {}
-    for key, value in counts.items():
-        if key[-2:] == '01':  # Only r = 1 and knna = 0
-            class_votes = key[:-2] # excluding the "fixed bit" 01 (r, knna)
-            classes_votes[int(class_votes[::-1],2)] = value
-    if not class_votes: #Empty dictionary
-        raise ValueError("No class")
-    sorted_votes = sorted(classes_votes.items(), key=lambda x: x[1], reverse=True)
-    return sorted_votes
 
 
 class AmplitudeQKNeighborsClassifier:
@@ -126,11 +115,13 @@ class AmplitudeQKNeighborsClassifier:
         self.circuit.measure(self.c, self.classical_classes)
 
         try:
-            simulator = Aer.get_backend('qasm_simulator')
+
+            simulator = AerSimulator(method='statevector', shots=8192)
+            #simulator = Aer.get_backend('qasm_simulator')
         except AerError as e:
             print(e)
 
-        result = execute(self.circuit, simulator, shots=8096).result()
+        result = execute(self.circuit, simulator, shots=n_shots).result()
         counts = result.get_counts(self.circuit)
 
         #Post Selection on ' 0 1'
