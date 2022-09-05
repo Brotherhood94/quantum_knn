@@ -7,6 +7,7 @@ import pandas as pd
 
 def load_soybean_small(return_X_y=True, as_frame=True):
     data = pd.read_csv('./datasets/soybean-small.data', header=None)
+    #data = pd.read_csv('./soybean-small.data', header=None)
     if return_X_y == False:
         return data
     else: #split X and y
@@ -20,17 +21,21 @@ def load_soybean_small(return_X_y=True, as_frame=True):
 
 def load_real_estate(return_X_y=True, as_frame=True):
     data = pd.read_csv('./datasets/real-estate.data')
+    #data = pd.read_csv('./real-estate.data')
+    n_bins = 3 #number of bins
+    labels = list(range(0, n_bins))
     if return_X_y == False:
+        data['price'] = pd.qcut(data['price'], labels=labels, q=n_bins) #binning target class
         return data
     else: #split X and y
-        X = data[data.columns[:-1]]
-        #print(np.unique(X['price']))
-        y = data.iloc[: , -1]
+        X = data.loc[:, data.columns != 'price']
+        y = pd.qcut(data['price'], labels=labels, q=n_bins) #binning target class
         return X, y
 
 
 def load_sonar(return_X_y=True, as_frame=True):
     data = pd.read_csv('./datasets/sonar.all-data', header=None)
+    #data = pd.read_csv('./sonar.all-data', header=None)
     if return_X_y == False:
         return data
     else: #split X and y
