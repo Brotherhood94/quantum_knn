@@ -105,7 +105,8 @@ class BasisRuan:
         self.c_overflow = ClassicalRegister(1, name='c_overflow')
 
         try:
-            self.simulator = AerSimulator(method='statevector', shots=8192)#, device='CPU')
+            #self.simulator = AerSimulator(method='aer_simulator', shots=8192)#, device='CPU')
+            self.simulator = BasicAer.get_backend('qasm_simulator')
             #self.simulator = AerSimulator(method='statevector', shots=8192, device='CPU')
             #self.simulator = AerSimulator(method='statevector', shots=8192, device='GPU', cuStateVec_enable=True)
         except AerError as e:
@@ -189,7 +190,7 @@ class BasisRuan:
         #self.circuit.measure(self.v, self.cv)
         #self.circuit.measure(self.x, self.cx)
 
-        result = execute(self.circuit, self.simulator).result()
+        result = execute(self.circuit, self.simulator, shots=8192).result()
         counts = result.get_counts(self.circuit)
         #print(self.circuit.draw())
         #print(counts)

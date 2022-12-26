@@ -90,7 +90,7 @@ class DangQuantumKnn:
 
         #self.circuit.append(get_binary_value_gate(bin_M, len(self.qbin_M), name='bin_M'), self.qbin_M)
         try:
-            self.simulator = AerSimulator(method='aer_simulator_statevector', shots=8192, device='GPU')
+            self.simulator = AerSimulator(method='aer_simulator', shots=8192)#, device='CPU')
             #self.simulator = AerSimulator(method='statevector', shots=8192, device='GPU', cuStateVec_enable=True)
         except AerError as e:
             raise Exception('Simulator'+str(e))

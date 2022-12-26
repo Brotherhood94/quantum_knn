@@ -1,5 +1,5 @@
 from qiskit.providers.aer import AerSimulator, AerError
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, execute
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, execute, Aer, BasicAer
 import math
 import sys
 sys.path.append('..')
@@ -138,7 +138,8 @@ class BasisQKNeighborsClassifier:
         #Instantiate Simulator
         try:
             #self.simulator = AerSimulator(method='statevector', shots=8192, device='GPU', cuStateVec_enable=True)
-            self.simulator = AerSimulator(method='statevector', shots=8192)
+            #self.simulator = AerSimulator(method='aer_simulator', shots=8192)
+            self.simulator = BasicAer.get_backend('qasm_simulator')
 
         except AerError as e:
             print(e)
@@ -190,7 +191,7 @@ class BasisQKNeighborsClassifier:
             self.circuit.measure(self.v, self.c_training)
 
             #------------- Simulation -------------------------#
-            result = execute(self.circuit, self.simulator).result()
+            result = execute(self.circuit, self.simulator, shots=8192).result()
             counts = result.get_counts(self.circuit)
 
             post_select = lambda counts: [(state, occurences) for state, occurences in counts.items()]

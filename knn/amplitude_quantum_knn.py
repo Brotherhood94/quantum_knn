@@ -1,5 +1,5 @@
 from qiskit.providers.aer import AerError, AerSimulator
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, execute, Aer
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, execute, Aer, BasicAer
 import numpy as np
 import math
 
@@ -116,7 +116,8 @@ class AmplitudeQKNeighborsClassifier:
 
         try:
 
-            simulator = AerSimulator(method='statevector', shots=8192)
+            #simulator = AerSimulator(method='aer_simulator', shots=8192)
+            simulator = BasicAer.get_backend('qasm_simulator')
             #simulator = Aer.get_backend('qasm_simulator')
         except AerError as e:
             print(e)
