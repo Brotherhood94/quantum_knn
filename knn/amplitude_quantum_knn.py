@@ -117,7 +117,8 @@ class AmplitudeQKNeighborsClassifier:
         try:
 
             #simulator = AerSimulator(method='aer_simulator', shots=8192)
-            simulator = BasicAer.get_backend('qasm_simulator')
+            simulator = Aer.get_backend('qasm_simulator')
+            simulator.set_options(device='GPU')
             #simulator = Aer.get_backend('qasm_simulator')
         except AerError as e:
             print(e)

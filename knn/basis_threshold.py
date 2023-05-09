@@ -106,7 +106,8 @@ class BasisRuan:
 
         try:
             #self.simulator = AerSimulator(method='aer_simulator', shots=8192)#, device='CPU')
-            self.simulator = BasicAer.get_backend('qasm_simulator')
+            self.simulator = Aer.get_backend('qasm_simulator')
+            self.simulator.set_options(device='GPU')
             #self.simulator = AerSimulator(method='statevector', shots=8192, device='CPU')
             #self.simulator = AerSimulator(method='statevector', shots=8192, device='GPU', cuStateVec_enable=True)
         except AerError as e:

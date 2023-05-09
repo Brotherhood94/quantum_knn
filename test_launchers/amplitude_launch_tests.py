@@ -2,7 +2,7 @@ from tkinter import W
 from sklearn.datasets import load_iris, load_breast_cancer, load_digits
 from datasets.load_external_dataset import load_sonar, load_soybean_small, load_real_estate
 import numpy as np
-import multiprocessing
+#import multiprocessing
 
 import tests.amplitude_tests.test_1 as t1
 import tests.amplitude_tests.test_2 as t2
@@ -25,7 +25,7 @@ if __name__ == '__main__':
         test_size = 0.3
 
 
-        processes = []
+        #processes = []
 
         print("[Started Test 1]")
         # 1 test istance, 1 istance per class training
@@ -33,15 +33,15 @@ if __name__ == '__main__':
         test_iters_t1 = 50
         train_iters_t1 = 50
 
-        p0 = multiprocessing.Process(target=t1.test_1_no_pca, args=(X, y, knn_k, test_iters_t1, train_iters_t1, dataset, n_classes, n_features_real, training_type, test_size))
-        processes.append(p0)
-        #t1.test_1_no_pca(X, y, knn_k, test_iters_t1, train_iters_t1, dataset, n_classes, n_features_real, training_type, test_size)
+        #p0 = multiprocessing.Process(target=t1.test_1_no_pca, args=(X, y, knn_k, test_iters_t1, train_iters_t1, dataset, n_classes, n_features_real, training_type, test_size))
+        #processes.append(p0)
+        t1.test_1_no_pca(X, y, knn_k, test_iters_t1, train_iters_t1, dataset, n_classes, n_features_real, training_type, test_size)
 
 
         print("[Started Test 1 PCA]")
-        p1 = multiprocessing.Process(target=t1.test_1_pca, args=(X, y, knn_k, test_iters_t1, train_iters_t1, dataset, n_classes, n_features_real, training_type, test_size))
-        processes.append(p1)
-        #t1.test_1_pca(X, y, knn_k, test_iters_t1, train_iters_t1, dataset, n_classes, n_features_real, training_type, test_size)
+        #p1 = multiprocessing.Process(target=t1.test_1_pca, args=(X, y, knn_k, test_iters_t1, train_iters_t1, dataset, n_classes, n_features_real, training_type, test_size))
+        #processes.append(p1)
+        t1.test_1_pca(X, y, knn_k, test_iters_t1, train_iters_t1, dataset, n_classes, n_features_real, training_type, test_size)
 
         ##############################################################################
 
@@ -53,14 +53,14 @@ if __name__ == '__main__':
         train_iters_t2 = 50
         exp_records_per_class = 6 #2,4,8,16,32 (2^5)
 
-        p2 = multiprocessing.Process(target=t2.test_2_no_pca, args=(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class,dataset, n_classes, n_features_real, training_type, test_size))
-        processes.append(p2)
-        #t2.test_2_no_pca(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class,dataset, n_classes, n_features_real, training_type, test_size)
+        #p2 = multiprocessing.Process(target=t2.test_2_no_pca, args=(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class,dataset, n_classes, n_features_real, training_type, test_size))
+        #processes.append(p2)
+        t2.test_2_no_pca(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class,dataset, n_classes, n_features_real, training_type, test_size)
 
         print("[Started Test 2 PCA]")
-        p3 = multiprocessing.Process(target=t2.test_2_pca, args=(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size))
-        processes.append(p3)
-        #t2.test_2_pca(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size)
+        #p3 = multiprocessing.Process(target=t2.test_2_pca, args=(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size))
+        #processes.append(p3)
+        t2.test_2_pca(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size)
 
         ##############################################################################
 
@@ -70,14 +70,14 @@ if __name__ == '__main__':
         # 20 Random Selection on Training
 
         test_iters_t3 = 100
-        p4 = multiprocessing.Process(target=t3.test_3_no_pca, args=(X, y, knn_k, test_iters_t3, dataset, n_classes, n_features_real, training_type, test_size))
-        processes.append(p4)
-        #t3.test_3_no_pca(X, y, knn_k, test_iters_t3, dataset, n_classes, n_features_real, training_type, test_size)
+        #p4 = multiprocessing.Process(target=t3.test_3_no_pca, args=(X, y, knn_k, test_iters_t3, dataset, n_classes, n_features_real, training_type, test_size))
+        #processes.append(p4)
+        t3.test_3_no_pca(X, y, knn_k, test_iters_t3, dataset, n_classes, n_features_real, training_type, test_size)
 
         print("[Started Test 3 PCA]")
-        p5 = multiprocessing.Process(target=t3.test_3_pca, args=(X, y, knn_k, test_iters_t3, dataset, n_classes, n_features_real, training_type, test_size))
-        processes.append(p5)
-        #t3.test_3_pca(X, y, knn_k, test_iters_t3, dataset, n_classes, n_features_real, training_type, test_size)
+        #p5 = multiprocessing.Process(target=t3.test_3_pca, args=(X, y, knn_k, test_iters_t3, dataset, n_classes, n_features_real, training_type, test_size))
+        #processes.append(p5)
+        t3.test_3_pca(X, y, knn_k, test_iters_t3, dataset, n_classes, n_features_real, training_type, test_size)
 
         ##############################################################################
 
@@ -87,19 +87,21 @@ if __name__ == '__main__':
 
         test_iters_t4 = 100
 
-        p6 = multiprocessing.Process(target=t4.test_4_no_pca, args=(X, y, knn_k, test_iters_t4, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size))
-        processes.append(p6)
-        #t4.test_4_no_pca(X, y, knn_k, test_iters_t4, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size)
+        #p6 = multiprocessing.Process(target=t4.test_4_no_pca, args=(X, y, knn_k, test_iters_t4, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size))
+        #processes.append(p6)
+        t4.test_4_no_pca(X, y, knn_k, test_iters_t4, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size)
 
         print("[Started Test 4 PCA]")
-        p7 = multiprocessing.Process(target=t4.test_4_pca, args=(X, y, knn_k, test_iters_t4, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size))
-        processes.append(p7)
-        #t4.test_4_pca(X, y, knn_k, test_iters_t4, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size)
+        #p7 = multiprocessing.Process(target=t4.test_4_pca, args=(X, y, knn_k, test_iters_t4, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size))
+        #processes.append(p7)
+        t4.test_4_pca(X, y, knn_k, test_iters_t4, exp_records_per_class, dataset, n_classes, n_features_real, training_type, test_size)
 
+        '''
         for process in processes:
             process.start()
 
         for process in processes:
             process.join()
+        '''
 
         ##############################################################################

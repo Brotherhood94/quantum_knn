@@ -1,7 +1,7 @@
 from sklearn.datasets import load_iris, load_breast_cancer, load_digits
 from datasets.load_external_dataset import load_sonar, load_soybean_small, load_real_estate
 import numpy as np
-import multiprocessing
+#import multiprocessing
 
 import tests.basis_threshold_tests.test_1 as t1
 import tests.basis_threshold_tests.test_2 as t2
@@ -37,14 +37,14 @@ if __name__ == '__main__':
                 test_iters_t1 = 50
                 train_iters_t1 = 50
 
-                p0 = multiprocessing.Process(target=t1.test_1_pca, args=(X, y, knn_k, test_iters_t1, train_iters_t1, d_name, n_classes, 3, training_type, test_size, enc_type, 2))
-                processes.append(p0)
-                #t1.test_1_pca(X, y, knn_k, test_iters_t1, train_iters_t1, d_name, n_classes, 3, training_type, test_size, enc_type, 2)
+                #p0 = multiprocessing.Process(target=t1.test_1_pca, args=(X, y, knn_k, test_iters_t1, train_iters_t1, d_name, n_classes, 3, training_type, test_size, enc_type, 2))
+                #processes.append(p0)
+                t1.test_1_pca(X, y, knn_k, test_iters_t1, train_iters_t1, d_name, n_classes, 3, training_type, test_size, enc_type, 2)
 
 
-                p1 = multiprocessing.Process(target=t1.test_1_pca, args=(X, y, knn_k, test_iters_t1, train_iters_t1, d_name, n_classes, 5, training_type, test_size, enc_type, 4))
-                processes.append(p1)
-                #t1.test_1_pca(X, y, knn_k, test_iters_t1, train_iters_t1, d_name, n_classes, 5, training_type, test_size, enc_type, 4)
+                #p1 = multiprocessing.Process(target=t1.test_1_pca, args=(X, y, knn_k, test_iters_t1, train_iters_t1, d_name, n_classes, 5, training_type, test_size, enc_type, 4))
+                #processes.append(p1)
+                t1.test_1_pca(X, y, knn_k, test_iters_t1, train_iters_t1, d_name, n_classes, 5, training_type, test_size, enc_type, 4)
 
                 ##############################################################################
 
@@ -58,13 +58,13 @@ if __name__ == '__main__':
                 train_iters_t2 = 50
                 exp_records_per_class = 5 #2,4,8,16,32 (2^5)
 
-                p2 = multiprocessing.Process(target=t2.test_2_pca, args=(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class, d_name, n_classes, 3, training_type, test_size, enc_type, 2))
-                processes.append(p2)
-                #t2.test_2_pca(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class, d_name, n_classes, 3, training_type, test_size, enc_type, 2)
+                #p2 = multiprocessing.Process(target=t2.test_2_pca, args=(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class, d_name, n_classes, 3, training_type, test_size, enc_type, 2))
+                #processes.append(p2)
+                t2.test_2_pca(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class, d_name, n_classes, 3, training_type, test_size, enc_type, 2)
 
-                p3 = multiprocessing.Process(target=t2.test_2_pca, args=(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class, d_name, n_classes, 5, training_type, test_size, enc_type, 4))
-                processes.append(p3)
-                #t2.test_2_pca(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class, d_name, n_classes, 5, training_type, test_size, enc_type, 4)
+                #p3 = multiprocessing.Process(target=t2.test_2_pca, args=(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class, d_name, n_classes, 5, training_type, test_size, enc_type, 4))
+                #processes.append(p3)
+                t2.test_2_pca(X, y, knn_k, test_iters_t2, train_iters_t2, exp_records_per_class, d_name, n_classes, 5, training_type, test_size, enc_type, 4)
 
                 ##############################################################################
 
@@ -77,13 +77,13 @@ if __name__ == '__main__':
                 training_type = 'proto'
                 test_iters_t3 = 100
 
-                p4 = multiprocessing.Process(target=t3.test_3_pca, args=(X, y, knn_k, test_iters_t3, d_name, n_classes, 3, training_type, test_size, enc_type, 2))
-                processes.append(p4)
-                #t3.test_3_pca(X, y, knn_k, test_iters_t3, d_name, n_classes, 3, training_type, test_size, enc_type, 2)
+                #p4 = multiprocessing.Process(target=t3.test_3_pca, args=(X, y, knn_k, test_iters_t3, d_name, n_classes, 3, training_type, test_size, enc_type, 2))
+                #processes.append(p4)
+                t3.test_3_pca(X, y, knn_k, test_iters_t3, d_name, n_classes, 3, training_type, test_size, enc_type, 2)
 
-                p5 = multiprocessing.Process(target=t3.test_3_pca, args=(X, y, knn_k, test_iters_t3, d_name, n_classes, 5, training_type, test_size, enc_type, 4))
-                processes.append(p5)
-                #t3.test_3_pca(X, y, knn_k, test_iters_t3, d_name, n_classes, 5, training_type, test_size, enc_type, 4)
+                #p5 = multiprocessing.Process(target=t3.test_3_pca, args=(X, y, knn_k, test_iters_t3, d_name, n_classes, 5, training_type, test_size, enc_type, 4))
+                #processes.append(p5)
+                t3.test_3_pca(X, y, knn_k, test_iters_t3, d_name, n_classes, 5, training_type, test_size, enc_type, 4)
 
                 ##############################################################################
 
@@ -94,18 +94,20 @@ if __name__ == '__main__':
                 # 100 Random Selection on k
 
 
-                p6 = multiprocessing.Process(target=t4.test_4_pca, args=(X, y, knn_k, test_iters_t4, exp_records_per_class, d_name, n_classes, 3, training_type, test_size, enc_type, 2))
-                processes.append(p6)
-                #t4.test_4_pca(X, y, knn_k, test_iters_t4, exp_records_per_class, d_name, n_classes, 3, training_type, test_size, enc_type, 2)
+                #p6 = multiprocessing.Process(target=t4.test_4_pca, args=(X, y, knn_k, test_iters_t4, exp_records_per_class, d_name, n_classes, 3, training_type, test_size, enc_type, 2))
+                #processes.append(p6)
+                t4.test_4_pca(X, y, knn_k, test_iters_t4, exp_records_per_class, d_name, n_classes, 3, training_type, test_size, enc_type, 2)
 
-                p7 = multiprocessing.Process(target=t4.test_4_pca, args=(X, y, knn_k, test_iters_t4, exp_records_per_class, d_name, n_classes, 5, training_type, test_size, enc_type, 4))
-                processes.append(p7)
-                #t4.test_4_pca(X, y, knn_k, test_iters_t4, exp_records_per_class, d_name, n_classes, 5, training_type, test_size, enc_type, 4)
+                #p7 = multiprocessing.Process(target=t4.test_4_pca, args=(X, y, knn_k, test_iters_t4, exp_records_per_class, d_name, n_classes, 5, training_type, test_size, enc_type, 4))
+                #processes.append(p7)
+                t4.test_4_pca(X, y, knn_k, test_iters_t4, exp_records_per_class, d_name, n_classes, 5, training_type, test_size, enc_type, 4)
 
                 ##############################################################################
 
+                '''
                 for process in processes:
                     process.start()
 
                 for process in processes:
                     process.join()
+                '''

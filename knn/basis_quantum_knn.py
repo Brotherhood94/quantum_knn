@@ -139,7 +139,8 @@ class BasisQKNeighborsClassifier:
         try:
             #self.simulator = AerSimulator(method='statevector', shots=8192, device='GPU', cuStateVec_enable=True)
             #self.simulator = AerSimulator(method='aer_simulator', shots=8192)
-            self.simulator = BasicAer.get_backend('qasm_simulator')
+            self.simulator = Aer.get_backend('qasm_simulator')
+            self.simulator.set_options(device='GPU')
 
         except AerError as e:
             print(e)
