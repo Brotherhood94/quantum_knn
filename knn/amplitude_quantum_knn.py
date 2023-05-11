@@ -131,6 +131,7 @@ class AmplitudeQKNeighborsClassifier:
         postselection = dict(post_select(counts))
         sorted_votes = sorted(postselection.items(), key=lambda x: x[1], reverse=True)
         
+        print(sorted_votes)
         majority_vote = sorted_votes[0][0][0:-4] #removing values for knna and r ' 0 1'
         self.circuit = None
         return int(majority_vote,2)

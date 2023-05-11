@@ -30,7 +30,8 @@ def test_3_pca(X, y, knn_k, test_iters, dataset, n_classes, n_features_real, tra
             selected_y_test = [y.loc[di_test[0]]] 
 
 
-            bKNN, bQKNN = execute_body_basis_threshold(knn_k, selected_X_train, selected_X_test, selected_y_train, selected_y_test,
+            if knn_k <= len(selected_X_train):
+                bKNN, bQKNN = execute_body_basis_threshold(knn_k, selected_X_train, selected_X_test, selected_y_train, selected_y_test,
                                                     dataset,
                                                     n_classes,
                                                     n_features_real,
@@ -43,6 +44,8 @@ def test_3_pca(X, y, knn_k, test_iters, dataset, n_classes, n_features_real, tra
                                                     n_bits,
                                                     enc_type
                                                     )
+            else:
+                continue
 
             bQKNN_exps.append(bQKNN)
             bKNN_exps.append(bKNN)
